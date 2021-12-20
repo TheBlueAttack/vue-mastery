@@ -2,9 +2,13 @@ app.component('product-display', {
     props: {
         premium: {
             type: Boolean, 
-            required: true
+            required: true,
         },
-
+        cart: {
+            type: Array,
+            required: true,
+            default: () => [],
+        }
     },
     template: 
     /*html*/
@@ -22,6 +26,7 @@ app.component('product-display', {
           <p v-if="inventory > 10">In Stock</p>
           <p v-else-if="inventory <= 10 && inventory > 0">Almost sold out</p>
           <p v-else>Out of Stock</p>
+
           <p v-show="onSale">{{ onSale }}</p>
 
           <p>Shipping: {{ shipping }}</p>
@@ -52,7 +57,7 @@ app.component('product-display', {
         <button 
           class="button" 
           @click="removeFromCart" 
-          v-show="cart > 0">
+          v-show="cart.length > 0">
           Remove from Cart
         </button>
       </div>
@@ -75,16 +80,14 @@ app.component('product-display', {
 },
 methods: {
     addToCart() {
-        this.cart += 1
+        this.$emit('add-to-cart', this.variants[this.selectedVariant].id)
+    }, 
+    removeFromCart() {
+        this.$emit('remove-from-cart', this.variants[this.selectedVariant].id)
     }, 
     updateVariant(index) {
         this.selectedVariant = index
     },
-    removeFromCart() {
-        if (this.cart >= 1) {
-            this.cart -= 1
-        }
-    }, 
 },
 computed: {
     title() {
